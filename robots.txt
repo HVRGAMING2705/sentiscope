@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sentiscope.vercel.app/sitemap.xml
+Sitemap: https://sentiscope-jade.vercel.app/sitemap.xml
