@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SentiScope — AI Sentiment Analyzer for Product Reviews</title>
+<meta name="description" content="SentiScope is a machine-learning sentiment analyzer for product reviews. Type any review and a real TF-IDF + logistic regression model, trained in Python and running fully in your browser, scores it positive or negative.">
+<link rel="canonical" href="https://sentiscope.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SentiScope — AI Sentiment Analyzer">
+<meta property="og:description" content="Type a product review, get an instant sentiment score from a real trained ML model running in your browser.">
+<meta property="og:url" content="https://sentiscope.vercel.app/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SentiScope — AI Sentiment Analyzer">
+<meta name="twitter:description" content="Real TF-IDF + logistic regression sentiment model, running 100% in the browser.">
+<meta name="robots" content="index, follow">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication",
+"name":"SentiScope","applicationCategory":"EducationalApplication",
+"operatingSystem":"Web","description":"Machine-learning sentiment analyzer for product reviews, running entirely in the browser.",
+"author":{"@type":"Person","name":"Vikranth Reddy"}}
+</script>
+<style>
+  :root { --ink:#111; --muted:#555; --line:#e5e5e5; --bg:#ffffff; --card:#fafafa; }
+  * { box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+         color:var(--ink); background:var(--bg); margin:0; line-height:1.6; }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 64px; }
+  header { border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:28px; }
+  h1 { font-size:2rem; margin:0 0 4px; letter-spacing:-0.5px; }
+  .tag { color:var(--muted); margin:0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px; margin:18px 0; }
+  textarea { width:100%; min-height:110px; border:1px solid var(--line); border-radius:8px;
+             padding:12px; font-size:1rem; color:var(--ink); resize:vertical; }
+  button { background:var(--ink); color:#fff; border:0; border-radius:8px; padding:12px 26px;
+           font-size:1rem; cursor:pointer; margin-top:12px; }
+  button:hover { background:#333; }
+  .samples { margin-top:10px; font-size:.9rem; color:var(--muted); }
+  .samples button { background:#fff; color:var(--ink); border:1px solid var(--line);
+                    padding:6px 12px; font-size:.85rem; margin:4px 6px 0 0; }
+  #result { display:none; }
+  .label { font-size:1.6rem; font-weight:700; margin:6px 0; }
+  .pos { color:#0a7a2f; } .neg { color:#c1121f; }
+  .bar { height:14px; background:#eee; border-radius:7px; overflow:hidden; margin:10px 0; }
+  .fill { height:100%; width:50%; transition:width .4s; background:var(--ink); }
+  .words { font-size:.9rem; color:var(--muted); }
+  .words b { color:var(--ink); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:600px){ .grid{grid-template-columns:1fr;} }
+  h2 { font-size:1.3rem; margin:28px 0 8px; }
+  code { background:#f0f0f0; padding:2px 6px; border-radius:4px; font-size:.9em; }
+  footer { border-top:1px solid var(--line); margin-top:40px; padding-top:16px;
+           color:var(--muted); font-size:.9rem; }
+  a { color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>SentiScope 🔍</h1>
+  <p class="tag">ML-powered sentiment analyzer for product reviews — by Vikranth Reddy</p>
+</header>
+
+<section class="card">
+  <h2 style="margin-top:0">Try the live model</h2>
+  <p>Type a product review below. A real <b>TF-IDF + logistic regression</b> model — trained in Python, exported as weights, running 100% in your browser — scores it.</p>
+  <textarea id="input" placeholder="e.g. I love this phone, the camera is amazing and battery lasts all day"></textarea>
+  <div><button id="go">Analyze sentiment</button></div>
+  <div class="samples">Try:
+    <button data-s="The sound quality is fantastic and the design is beautiful">🎧 positive</button>
+    <button data-s="Terrible product, it broke after two days, total waste of money">🗑️ negative</button>
+    <button data-s="It works okay but the build feels cheap for the price">🤔 mixed</button>
+  </div>
+</section>
+
+<section class="card" id="result">
+  <div class="label" id="verdict">—</div>
+  <div class="bar"><div class="fill" id="bar"></div></div>
+  <div id="prob" style="color:var(--muted)">—</div>
+  <div class="words" id="why" style="margin-top:10px"></div>
+</section>
+
+<section>
+  <h2>How it works</h2>
+  <div class="grid">
+    <div class="card"><b>1. Data</b><br>216 labeled product reviews (positive / negative), generated from sentiment-controlled templates.</div>
+    <div class="card"><b>2. Features</b><br>TF-IDF unigrams — each word weighted by how rare it is across reviews.</div>
+    <div class="card"><b>3. Model</b><br>Logistic regression (scikit-learn) — learns a weight per word. 5-fold CV accuracy: <b>100%</b>.</div>
+    <div class="card"><b>4. Browser</b><br><code>weights.json</code> (vocabulary + idf + coefficients) is shipped to the site; JavaScript re-runs the exact same math: σ(w·x + b).</div>
+  </div>
+  <h2>Tech stack</h2>
+  <p>Python · scikit-learn · NumPy · vanilla JavaScript · static hosting (Vercel)</p>
+  <h2>Files in this repo</h2>
+  <p><code>train.py</code> — trains the model and exports <code>weights.json</code> · <code>index.html</code> — this demo · <code>vercel.json</code> — security headers</p>
+</section>
+
+<footer>
+  Built by <a href="https://github.com/HVRGAMING2705">Vikranth Reddy</a> · B.Tech CSE (AI &amp; ML), Woxsen University ·
+  <a href="https://github.com/HVRGAMING2705/sentiscope">GitHub repo</a>
+</footer>
+</div>
+
+<script>
+let W = null;
+let STOP = new Set();
+fetch("weights.json").then(r => r.json()).then(w => {
+  W = w;
+  STOP = new Set(w.stop_words);
+}).catch(() => {});
+
+function tokenize(text) {
+  return (text.toLowerCase().match(/\b\w\w+\b/g) || []).filter(t => !STOP.has(t));
+}
+
+function score(text) {
+  const toks = tokenize(text);
+  const tf = {};
+  toks.forEach(t => tf[t] = (tf[t] || 0) + 1);
+  // TF-IDF: sublinear tf * idf, then L2 row normalization (matches sklearn)
+  const feats = [];
+  for (const [tok, cnt] of Object.entries(tf)) {
+    const i = W.vocab.indexOf(tok);
+    if (i < 0) continue;
+    feats.push({ tok, x: (1 + Math.log(cnt)) * W.idf[i], coef: W.coef[i] });
+  }
+  const norm = Math.sqrt(feats.reduce((s, f) => s + f.x * f.x, 0)) || 1;
+  let z = W.intercept;
+  feats.forEach(f => { f.c = f.coef * (f.x / norm); z += f.c; });
+  const p = 1 / (1 + Math.exp(-z));
+  feats.sort((a, b) => Math.abs(b.c) - Math.abs(a.c));
+  return { p, top: feats.slice(0, 5) };
+}
+
+function analyze() {
+  const text = document.getElementById("input").value.trim();
+  if (!text) { alert("Type a review first!"); return; }
+  if (!W) { alert("Model weights are still loading — try again in a second."); return; }
+  const { p, top } = score(text);
+  const res = document.getElementById("result");
+  res.style.display = "block";
+  const v = document.getElementById("verdict");
+  const bar = document.getElementById("bar");
+  if (p >= 0.5) {
+    v.innerHTML = "😊 Positive"; v.className = "label pos";
+    bar.style.background = "#0a7a2f";
+  } else {
+    v.innerHTML = "😞 Negative"; v.className = "label neg";
+    bar.style.background = "#c1121f";
+  }
+  bar.style.width = (p * 100).toFixed(1) + "%";
+  document.getElementById("prob").textContent =
+    `P(positive) = ${p.toFixed(3)}  ·  P(negative) = ${(1 - p).toFixed(3)}`;
+  document.getElementById("why").innerHTML = top.length
+    ? "Top words pushing the decision: " + top.map(f =>
+        `<b>${f.tok}</b> (${f.c >= 0 ? "+" : ""}${f.c.toFixed(2)})`).join(", ")
+    : "No known words in this review — try words like <b>amazing</b>, <b>terrible</b>, <b>great</b>.";
+  res.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+document.getElementById("go").addEventListener("click", analyze);
+document.getElementById("input").addEventListener("keydown", e => {
+  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) analyze();
+});
+document.querySelectorAll(".samples button").forEach(b =>
+  b.addEventListener("click", () => {
+    document.getElementById("input").value = b.dataset.s;
+    analyze();
+  }));
+</script>
+</body>
+</html>
