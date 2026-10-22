@@ -4,15 +4,15 @@
 <meta name="google-site-verification" content="5EchCsH88JXnn0Mc55I8joYV6mial9rsc4G8c0eg4Ls" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SentiScope — AI Sentiment Analyzer for Product Reviews</title>
+<title>SentiScope: AI Sentiment Analyzer for Product Reviews</title>
 <meta name="description" content="SentiScope is a machine-learning sentiment analyzer for product reviews. Type any review and a real TF-IDF + logistic regression model, trained in Python and running fully in your browser, scores it positive or negative.">
 <link rel="canonical" href="https://sentiscope.vercel.app/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="SentiScope — AI Sentiment Analyzer">
+<meta property="og:title" content="SentiScope: AI Sentiment Analyzer">
 <meta property="og:description" content="Type a product review, get an instant sentiment score from a real trained ML model running in your browser.">
 <meta property="og:url" content="https://sentiscope.vercel.app/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SentiScope — AI Sentiment Analyzer">
+<meta name="twitter:title" content="SentiScope: AI Sentiment Analyzer">
 <meta name="twitter:description" content="Real TF-IDF + logistic regression sentiment model, running 100% in the browser.">
 <meta name="robots" content="index, follow">
 <script type="application/ld+json">
@@ -54,20 +54,17 @@
            color:var(--muted); font-size:.9rem; }
   a { color:var(--ink); }
 </style>
-<meta property="og:image" content="https://sentiscope-jade.vercel.app/og.png">
-<meta name="twitter:image" content="https://sentiscope-jade.vercel.app/og.png">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body>
 <div class="wrap">
 <header>
-  <h1>SentiScope 🔍</h1>
-  <p class="tag">ML-powered sentiment analyzer for product reviews — by Vikranth Reddy</p>
+  <h1>SentiScope</h1>
+  <p class="tag">ML-powered sentiment analyzer for product reviews, by Vikranth Reddy</p>
 </header>
 
 <section class="card">
   <h2 style="margin-top:0">Try the live model</h2>
-  <p>Type a product review below. A real <b>TF-IDF + logistic regression</b> model — trained in Python, exported as weights, running 100% in your browser — scores it.</p>
+  <p>Type a product review below. A real <b>TF-IDF + logistic regression</b> model, trained in Python, exported as weights, running 100% in your browser, scores it.</p>
   <textarea id="input" placeholder="e.g. I love this phone, the camera is amazing and battery lasts all day"></textarea>
   <div><button id="go">Analyze sentiment</button></div>
   <div class="samples">Try:
@@ -88,20 +85,19 @@
   <h2>How it works</h2>
   <div class="grid">
     <div class="card"><b>1. Data</b><br>216 labeled product reviews (positive / negative), generated from sentiment-controlled templates.</div>
-    <div class="card"><b>2. Features</b><br>TF-IDF unigrams — each word weighted by how rare it is across reviews.</div>
-    <div class="card"><b>3. Model</b><br>Logistic regression (scikit-learn) — learns a weight per word. 5-fold CV accuracy: <b>100%</b>.</div>
+    <div class="card"><b>2. Features</b><br>TF-IDF unigrams: each word weighted by how rare it is across reviews.</div>
+    <div class="card"><b>3. Model</b><br>Logistic regression (scikit-learn): learns a weight per word. 5-fold CV accuracy: <b>100%</b>.</div>
     <div class="card"><b>4. Browser</b><br><code>weights.json</code> (vocabulary + idf + coefficients) is shipped to the site; JavaScript re-runs the exact same math: σ(w·x + b).</div>
   </div>
   <h2>Tech stack</h2>
   <p>Python · scikit-learn · NumPy · vanilla JavaScript · static hosting (Vercel)</p>
   <h2>Files in this repo</h2>
-  <p><code>train.py</code> — trains the model and exports <code>weights.json</code> · <code>index.html</code> — this demo · <code>vercel.json</code> — security headers</p>
+  <p><code>train.py</code>: trains the model and exports <code>weights.json</code> · <code>index.html</code>: this demo · <code>vercel.json</code>: security headers</p>
 </section>
 
 <footer>
   Built by <a href="https://github.com/HVRGAMING2705">Vikranth Reddy</a> · B.Tech CSE (AI &amp; ML), Woxsen University ·
   <a href="https://github.com/HVRGAMING2705/sentiscope">GitHub repo</a>
-<span class="fleet-legal" style="display:block;text-align:center;padding:10px 0;font-size:13px"><a href="/legal.html">Privacy · Terms</a></span>
 </footer>
 </div>
 
@@ -139,7 +135,7 @@ function score(text) {
 function analyze() {
   const text = document.getElementById("input").value.trim();
   if (!text) { alert("Type a review first!"); return; }
-  if (!W) { alert("Model weights are still loading — try again in a second."); return; }
+  if (!W) { alert("Model weights are still loading, try again in a second."); return; }
   const { p, top } = score(text);
   const res = document.getElementById("result");
   res.style.display = "block";
@@ -158,7 +154,7 @@ function analyze() {
   document.getElementById("why").innerHTML = top.length
     ? "Top words pushing the decision: " + top.map(f =>
         `<b>${f.tok}</b> (${f.c >= 0 ? "+" : ""}${f.c.toFixed(2)})`).join(", ")
-    : "No known words in this review — try words like <b>amazing</b>, <b>terrible</b>, <b>great</b>.";
+    : "No known words in this review. Try words like <b>amazing</b>, <b>terrible</b>, <b>great</b>.";
   res.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
@@ -172,6 +168,5 @@ document.querySelectorAll(".samples button").forEach(b =>
     analyze();
   }));
 </script>
-<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
